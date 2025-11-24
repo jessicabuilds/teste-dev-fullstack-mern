@@ -4,6 +4,10 @@ const Cart = require('../../src/models/Cart');
 const Product = require('../../src/models/Product');
 const User = require('../../src/models/User');
 
+const generateUniqueEmail = () => {
+  return `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
+};
+
 describe('CartService', () => {
   let testUser;
   let testProduct1;
@@ -24,7 +28,7 @@ describe('CartService', () => {
 
     testUser = await User.create({
       name: 'Test User',
-      email: 'test@example.com',
+      email: generateUniqueEmail(),
       password: 'hashedpassword123',
       role: 'user'
     });

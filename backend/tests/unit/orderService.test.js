@@ -9,6 +9,10 @@ const ProductService = require('../../src/services/ProductService');
 
 jest.mock('../../src/services/PaymentGatewayService');
 
+const generateUniqueEmail = () => {
+  return `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
+};
+
 describe('OrderService', () => {
   let testUser;
   let testProduct;
@@ -29,7 +33,7 @@ describe('OrderService', () => {
 
     testUser = await User.create({
       name: 'Test User',
-      email: 'test@example.com',
+      email: generateUniqueEmail(),
       password: 'hashedpassword123',
       role: 'user'
     });
@@ -56,7 +60,7 @@ describe('OrderService', () => {
 
   describe('createOrder', () => {
     it('should create order from cart', async () => {
-      await Cart.create({
+      const cart = await Cart.create({
         userId: testUser._id,
         items: [
           {
@@ -67,6 +71,8 @@ describe('OrderService', () => {
         ],
         total: 200
       });
+      
+      await cart.populate('items.product');
 
       const orderData = {
         shippingAddress: {
@@ -116,7 +122,7 @@ describe('OrderService', () => {
     });
 
     it('should throw error when insufficient stock', async () => {
-      await Cart.create({
+      const cart = await Cart.create({
         userId: testUser._id,
         items: [
           {
@@ -127,6 +133,8 @@ describe('OrderService', () => {
         ],
         total: 2000
       });
+      
+      await cart.populate('items.product');
 
       const orderData = {
         shippingAddress: {
@@ -145,7 +153,7 @@ describe('OrderService', () => {
     });
 
     it('should reserve stock when creating order', async () => {
-      await Cart.create({
+      const cart = await Cart.create({
         userId: testUser._id,
         items: [
           {
@@ -156,6 +164,8 @@ describe('OrderService', () => {
         ],
         total: 200
       });
+      
+      await cart.populate('items.product');
 
       const orderData = {
         shippingAddress: {
@@ -175,7 +185,7 @@ describe('OrderService', () => {
     });
 
     it('should clear cart after creating order', async () => {
-      await Cart.create({
+      const cart = await Cart.create({
         userId: testUser._id,
         items: [
           {
@@ -186,6 +196,8 @@ describe('OrderService', () => {
         ],
         total: 200
       });
+      
+      await cart.populate('items.product');
 
       const orderData = {
         shippingAddress: {
@@ -200,8 +212,8 @@ describe('OrderService', () => {
 
       await OrderService.createOrder(testUser._id, orderData);
 
-      const cart = await Cart.findOne({ userId: testUser._id });
-      expect(cart.items).toHaveLength(0);
+      const updatedCart = await Cart.findOne({ userId: testUser._id });
+      expect(updatedCart.items).toHaveLength(0);
     });
   });
 

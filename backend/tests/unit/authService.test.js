@@ -3,6 +3,10 @@ const AuthService = require('../../src/services/AuthService');
 const User = require('../../src/models/User');
 const RefreshToken = require('../../src/models/RefreshToken');
 
+const generateUniqueEmail = () => {
+  return `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
+};
+
 describe('AuthService', () => {
   beforeAll(async () => {
     await mongoose.connect(process.env.MONGODB_URI_TEST);
@@ -12,7 +16,7 @@ describe('AuthService', () => {
     await mongoose.connection.close();
   });
 
-  beforeEach(async () => {
+  afterEach(async () => {
     await User.deleteMany({});
     await RefreshToken.deleteMany({});
   });
@@ -21,7 +25,7 @@ describe('AuthService', () => {
     it('should register a new user successfully', async () => {
       const userData = {
         name: 'John Doe',
-        email: 'john@example.com',
+        email: generateUniqueEmail(),
         password: 'password123'
       };
 
@@ -37,7 +41,7 @@ describe('AuthService', () => {
     it('should hash the password', async () => {
       const userData = {
         name: 'John Doe',
-        email: 'john@example.com',
+        email: generateUniqueEmail(),
         password: 'password123'
       };
 
@@ -50,7 +54,7 @@ describe('AuthService', () => {
     it('should throw error if email already exists', async () => {
       const userData = {
         name: 'John Doe',
-        email: 'john@example.com',
+        email: generateUniqueEmail(),
         password: 'password123'
       };
 
@@ -61,32 +65,35 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
+    let testEmail;
+
     beforeEach(async () => {
+      testEmail = generateUniqueEmail();
       await AuthService.register({
         name: 'John Doe',
-        email: 'john@example.com',
+        email: testEmail,
         password: 'password123'
       });
     });
 
     it('should login successfully with valid credentials', async () => {
-      const result = await AuthService.login('john@example.com', 'password123');
+      const result = await AuthService.login(testEmail, 'password123');
 
       expect(result).toHaveProperty('user');
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
-      expect(result.user.email).toBe('john@example.com');
+      expect(result.user.email).toBe(testEmail);
     });
 
     it('should generate valid JWT token', async () => {
-      const result = await AuthService.login('john@example.com', 'password123');
+      const result = await AuthService.login(testEmail, 'password123');
 
       expect(typeof result.accessToken).toBe('string');
       expect(result.accessToken.split('.').length).toBe(3);
     });
 
     it('should create refresh token in database', async () => {
-      const result = await AuthService.login('john@example.com', 'password123');
+      const result = await AuthService.login(testEmail, 'password123');
 
       const refreshToken = await RefreshToken.findOne({ token: result.refreshToken });
       expect(refreshToken).toBeDefined();
@@ -101,22 +108,25 @@ describe('AuthService', () => {
 
     it('should throw error with invalid password', async () => {
       await expect(
-        AuthService.login('john@example.com', 'wrongpassword')
+        AuthService.login(testEmail, 'wrongpassword')
       ).rejects.toThrow('Invalid credentials');
     });
   });
 
   describe('refreshAccessToken', () => {
     let refreshToken;
+    let testUser;
+    let testEmail;
 
     beforeEach(async () => {
-      await AuthService.register({
+      testEmail = generateUniqueEmail();
+      testUser = await AuthService.register({
         name: 'John Doe',
-        email: 'john@example.com',
+        email: testEmail,
         password: 'password123'
       });
 
-      const loginResult = await AuthService.login('john@example.com', 'password123');
+      const loginResult = await AuthService.login(testEmail, 'password123');
       refreshToken = loginResult.refreshToken;
     });
 
@@ -144,15 +154,17 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     let refreshToken;
+    let testEmail;
 
     beforeEach(async () => {
+      testEmail = generateUniqueEmail();
       await AuthService.register({
         name: 'John Doe',
-        email: 'john@example.com',
+        email: testEmail,
         password: 'password123'
       });
 
-      const loginResult = await AuthService.login('john@example.com', 'password123');
+      const loginResult = await AuthService.login(testEmail, 'password123');
       refreshToken = loginResult.refreshToken;
     });
 
