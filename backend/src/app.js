@@ -28,4 +28,13 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+const productRoutes = require('./routes/product.routes');
+const cartRoutes = require('./routes/cart.routes');
+
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+
+const errorMiddleware = require('./middlewares/error.middleware');
+app.use(errorMiddleware);
+
 module.exports = app;
