@@ -5,7 +5,6 @@ const logger = require('./config/logger');
 
 const PORT = process.env.PORT || 5000;
 
-// Connect to database
 connectDB();
 
 app.listen(PORT, () => {
