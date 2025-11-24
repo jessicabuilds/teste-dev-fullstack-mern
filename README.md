@@ -1,61 +1,35 @@
 # Plataforma E-commerce
 
-Aplicação e-commerce full-stack construída com stack MERN.
+Aplicação full-stack de e-commerce desenvolvida com a stack MERN, oferecendo uma arquitetura completa para catálogo, carrinho, pedidos e pagamentos.
 
-## Sobre
+## Sobre o Projeto
 
-Plataforma de e-commerce com as seguintes funcionalidades:
+A plataforma possui as seguintes funcionalidades:
 
-- Autenticação JWT com refresh tokens
-- Catálogo de produtos e categorias
-- Carrinho de compras
-- Processamento de pedidos
-- Integração com gateway de pagamento (Pagar.me)
-- Jobs em background para sincronização e manutenção
-- Interface React responsiva
+- Autenticação utilizando JWT com refresh tokens  
+- Catálogo de produtos e categorias  
+- Carrinho de compras  
+- Processamento de pedidos  
+- Integração com gateway de pagamento (Pagar.me)  
+- Jobs em background para sincronização e manutenção  
+- Interface responsiva desenvolvida em React  
 
 ## Stack Tecnológica
 
-**Backend:**
-- Node.js + Express
-- MongoDB + Mongoose
-- Autenticação JWT
-- Bcrypt
-- Winston
-- Node-cron
-- Jest + fast-check
+### Backend
+- Node.js + Express  
+- MongoDB + Mongoose  
+- JWT  
+- Bcrypt  
+- Winston (logs)  
+- Node-cron (tarefas agendadas)  
+- Jest (testes)  
 
-**Frontend:**
-- React 18
-- React Router
-- Axios
-- React Toastify
-
-## Estrutura do Projeto
-
-```
-.
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── middlewares/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   ├── cronjobs/
-│   │   └── webhooks/
-│   └── tests/
-└── frontend/
-    └── src/
-        ├── components/
-        ├── pages/
-        ├── services/
-        ├── hooks/
-        ├── context/
-        └── styles/
-```
+### Frontend
+- React 18  
+- React Router  
+- Axios  
+- React Toastify  
 
 ## Começando
 
