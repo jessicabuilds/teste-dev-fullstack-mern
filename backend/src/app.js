@@ -30,9 +30,11 @@ app.get('/health', (req, res) => {
 
 const productRoutes = require('./routes/product.routes');
 const cartRoutes = require('./routes/cart.routes');
+const orderRoutes = require('./routes/order.routes');
 
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
 
 const errorMiddleware = require('./middlewares/error.middleware');
 app.use(errorMiddleware);
