@@ -7,8 +7,7 @@ services:
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin123
-      MONGO_INITDB_DATABASE: ecommerce
+      MONGO_INITDB_ROOT_PASSWORD: senha123
     ports:
       - "27017:27017"
     volumes:

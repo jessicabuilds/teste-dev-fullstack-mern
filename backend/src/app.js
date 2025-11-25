@@ -40,7 +40,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 
-const errorMiddleware = require('./middlewares/error.middleware');
-app.use(errorMiddleware);
+const { errorHandler } = require('./middlewares/errorHandler.middleware');
+app.use(errorHandler);
 
 module.exports = app;
