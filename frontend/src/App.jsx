@@ -11,11 +11,11 @@ import { CartProvider } from './contexts/CartContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
-// Components
-import ProtectedRoute from './components/ProtectedRoute';
-
 // Pages
-import Home from './pages/Home';
+import Home from './pages/HomePage';
+import Login from './pages/LoginPage';
+import Register from './pages/RegisterPage';
+import Products from './pages/Products';
 
 function App() {
   return (
@@ -27,6 +27,9 @@ function App() {
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/products" element={<Products />} />
               </Routes>
             </main>
             <Footer />
