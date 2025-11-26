@@ -36,12 +36,41 @@ class ProductController {
 
   async createProduct(req, res, next) {
     try {
-      const product = await ProductService.createProduct(req.body);
+      const result = await ProductService.createProduct(req.body);
 
-      res.status(201).json({
-        success: true,
-        data: product
-      });
+      if (!result.success && !result.errors) {
+        return res.status(201).json({
+          success: true,
+          data: result
+        });
+      }
+
+      const totalCount = result.success.length + result.errors.length;
+      const createdCount = result.success.length;
+      const failedCount = result.errors.length;
+
+      let statusCode;
+      if (failedCount === 0) {
+        statusCode = 201;
+      } else if (createdCount === 0) {
+        statusCode = 400;
+      } else {
+        statusCode = 207;
+      }
+
+      const response = {
+        success: createdCount > 0,
+        count: totalCount,
+        created: createdCount,
+        failed: failedCount,
+        data: result.success
+      };
+
+      if (failedCount > 0) {
+        response.errors = result.errors;
+      }
+
+      res.status(statusCode).json(response);
     } catch (error) {
       next(error);
     }

@@ -28,9 +28,36 @@ class ProductService {
   }
 
   async createProduct(productData) {
+    if (Array.isArray(productData)) {
+      return await this._createMultipleProducts(productData);
+    }
+    
     const product = new Product(productData);
     await product.save();
     return product;
+  }
+
+  async _createMultipleProducts(productsArray) {
+    const results = {
+      success: [],
+      errors: []
+    };
+
+    for (let i = 0; i < productsArray.length; i++) {
+      try {
+        const product = new Product(productsArray[i]);
+        await product.save();
+        results.success.push(product);
+      } catch (error) {
+        results.errors.push({
+          index: i,
+          product: productsArray[i],
+          error: error.message
+        });
+      }
+    }
+
+    return results;
   }
 
   async updateProduct(productId, updateData) {

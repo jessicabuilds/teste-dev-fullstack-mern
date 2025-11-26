@@ -248,4 +248,211 @@ describe('ProductService', () => {
       await expect(ProductService.deleteProduct(fakeId)).rejects.toThrow('Product not found');
     });
   });
+
+  describe('createProduct - Bulk Creation', () => {
+    describe('when receiving an array of products', () => {
+      it('should create all valid products successfully', async () => {
+        const productsData = [
+          {
+            name: 'Product 1',
+            description: 'Description 1',
+            price: 100,
+            category: 'Electronics',
+            stock: 10
+          },
+          {
+            name: 'Product 2',
+            description: 'Description 2',
+            price: 200,
+            category: 'Books',
+            stock: 20
+          },
+          {
+            name: 'Product 3',
+            description: 'Description 3',
+            price: 300,
+            category: 'Electronics',
+            stock: 30
+          }
+        ];
+
+        const result = await ProductService.createProduct(productsData);
+
+        expect(result.success).toBeDefined();
+        expect(result.errors).toBeDefined();
+        expect(result.success.length).toBe(3);
+        expect(result.errors.length).toBe(0);
+        expect(result.success[0].name).toBe('Product 1');
+        expect(result.success[1].name).toBe('Product 2');
+        expect(result.success[2].name).toBe('Product 3');
+      });
+
+      it('should handle partial success when some products are invalid', async () => {
+        const productsData = [
+          {
+            name: 'Valid Product',
+            description: 'Valid description',
+            price: 100,
+            category: 'Electronics',
+            stock: 10
+          },
+          {
+            name: '', // Invalid: empty name
+            description: 'Invalid product',
+            price: 200,
+            category: 'Books',
+            stock: 20
+          },
+          {
+            name: 'Another Valid Product',
+            description: 'Another valid description',
+            price: 300,
+            category: 'Electronics',
+            stock: 30
+          }
+        ];
+
+        const result = await ProductService.createProduct(productsData);
+
+        expect(result.success.length).toBe(2);
+        expect(result.errors.length).toBe(1);
+        expect(result.errors[0].index).toBe(1);
+        expect(result.success[0].name).toBe('Valid Product');
+        expect(result.success[1].name).toBe('Another Valid Product');
+      });
+
+      it('should return all errors when all products are invalid', async () => {
+        const productsData = [
+          {
+            name: '', // Invalid: empty name
+            description: 'Description 1',
+            price: 100,
+            category: 'Electronics',
+            stock: 10
+          },
+          {
+            name: 'Product 2',
+            description: '', // Invalid: empty description
+            price: 200,
+            category: 'Books',
+            stock: 20
+          }
+        ];
+
+        const result = await ProductService.createProduct(productsData);
+
+        expect(result.success.length).toBe(0);
+        expect(result.errors.length).toBe(2);
+        expect(result.errors[0].index).toBe(0);
+        expect(result.errors[1].index).toBe(1);
+      });
+
+      it('should include product data and error message in error objects', async () => {
+        const productsData = [
+          {
+            name: '',
+            description: 'Invalid product',
+            price: 100,
+            category: 'Electronics',
+            stock: 10
+          }
+        ];
+
+        const result = await ProductService.createProduct(productsData);
+
+        expect(result.errors.length).toBe(1);
+        expect(result.errors[0].index).toBe(0);
+        expect(result.errors[0].product).toEqual(productsData[0]);
+        expect(result.errors[0].error).toBeDefined();
+        expect(typeof result.errors[0].error).toBe('string');
+      });
+
+      it('should process products independently', async () => {
+        const productsData = [
+          {
+            name: 'Product 1',
+            description: 'Description 1',
+            price: 100,
+            category: 'Electronics',
+            stock: 10
+          },
+          {
+            name: '', // This will fail
+            description: 'Description 2',
+            price: 200,
+            category: 'Books',
+            stock: 20
+          },
+          {
+            name: 'Product 3',
+            description: 'Description 3',
+            price: 300,
+            category: 'Electronics',
+            stock: 30
+          },
+          {
+            name: 'Product 4',
+            description: '', // This will fail
+            price: 400,
+            category: 'Books',
+            stock: 40
+          }
+        ];
+
+        const result = await ProductService.createProduct(productsData);
+
+        expect(result.success.length).toBe(2);
+        expect(result.errors.length).toBe(2);
+        expect(result.errors[0].index).toBe(1);
+        expect(result.errors[1].index).toBe(3);
+      });
+
+      it('should assign unique IDs to all created products', async () => {
+        const productsData = [
+          {
+            name: 'Product 1',
+            description: 'Description 1',
+            price: 100,
+            category: 'Electronics',
+            stock: 10
+          },
+          {
+            name: 'Product 2',
+            description: 'Description 2',
+            price: 200,
+            category: 'Books',
+            stock: 20
+          }
+        ];
+
+        const result = await ProductService.createProduct(productsData);
+
+        expect(result.success.length).toBe(2);
+        expect(result.success[0]._id).toBeDefined();
+        expect(result.success[1]._id).toBeDefined();
+        expect(result.success[0]._id.toString()).not.toBe(result.success[1]._id.toString());
+      });
+    });
+
+    describe('backward compatibility', () => {
+      it('should maintain original behavior for single product object', async () => {
+        const productData = {
+          name: 'Single Product',
+          description: 'Single description',
+          price: 99.99,
+          category: 'Electronics',
+          stock: 15
+        };
+
+        const product = await ProductService.createProduct(productData);
+
+        // Should return a single product object, not a result object
+        expect(product._id).toBeDefined();
+        expect(product.name).toBe(productData.name);
+        expect(product.price).toBe(productData.price);
+        expect(product.success).toBeUndefined();
+        expect(product.errors).toBeUndefined();
+      });
+    });
+  });
 });

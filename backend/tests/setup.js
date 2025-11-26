@@ -5,4 +5,4 @@ process.env.JWT_SECRET = 'test-secret';
 process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
 process.env.JWT_EXPIRES_IN = '15m';
 process.env.JWT_REFRESH_EXPIRES_IN = '7d';
-process.env.MONGODB_URI_TEST = 'mongodb://localhost:27017/ecommerce-test';
+process.env.MONGODB_URI_TEST = 'mongodb://admin:senha123@localhost:27017/ecommerce_test?authSource=admin';
