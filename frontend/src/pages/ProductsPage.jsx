@@ -1,25 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import { toast } from 'react-toastify';
 import { useCart } from '../contexts/CartContext';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 
-const Products = () => {
+const ProductsPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const { addItem } = useCart();
 
   const categories = [
     { value: 'all', label: 'Todos' },
     { value: 'smartphones', label: 'Smartphones' },
-    { value: 'laptops', label: 'Notebooks' },
-    { value: 'peripherals', label: 'Periféricos' },
+    { value: 'notebooks', label: 'Notebooks' },
+    { value: 'perifericos', label: 'Periféricos' },
     { value: 'hardware', label: 'Hardware' },
   ];
+
+  useEffect(() => {
+    // Atualizar categoria quando a URL mudar
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     loadProducts();
@@ -33,7 +42,7 @@ const Products = () => {
       const params = selectedCategory !== 'all' ? { category: selectedCategory } : {};
       const response = await api.get('/products', { params });
       
-      setProducts(response.data);
+      setProducts(response.data.data || []);
     } catch (err) {
       setError(err.response?.data?.message || 'Erro ao carregar produtos');
     } finally {
@@ -69,7 +78,14 @@ const Products = () => {
           {categories.map((category) => (
             <button
               key={category.value}
-              onClick={() => setSelectedCategory(category.value)}
+              onClick={() => {
+                setSelectedCategory(category.value);
+                if (category.value === 'all') {
+                  setSearchParams({});
+                } else {
+                  setSearchParams({ category: category.value });
+                }
+              }}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 selectedCategory === category.value
                   ? 'bg-primary-600 text-white'
@@ -115,7 +131,6 @@ const Products = () => {
   );
 };
 
-// Componente do Card de Produto
 const ProductCard = ({ product, onAddToCart }) => {
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -204,4 +219,4 @@ const ProductCard = ({ product, onAddToCart }) => {
   );
 };
 
-export default Products;
+export default ProductsPage;

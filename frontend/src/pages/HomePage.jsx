@@ -19,25 +19,25 @@ const Home = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
-      link: '/products?category=laptops' 
+      link: '/products?category=notebooks' 
     },
     { 
-      name: 'Tablets', 
+      name: 'Periféricos', 
       icon: (
         <svg className="w-12 h-12 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
         </svg>
       ),
-      link: '/products?category=tablets' 
+      link: '/products?category=perifericos' 
     },
     { 
-      name: 'Acessórios', 
+      name: 'Hardware', 
       icon: (
         <svg className="w-12 h-12 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
         </svg>
       ),
-      link: '/products?category=accessories' 
+      link: '/products?category=hardware' 
     },
   ];
 
@@ -50,12 +50,12 @@ const Home = () => {
               Os melhores eletrônicos em um só lugar
             </h1>
             <p className="text-xl mb-8 text-primary-100">
-              Encontre smartphones, notebooks, tablets e acessórios com os melhores preços e qualidade garantida.
+              Encontre smartphones, notebooks, hardware e periféricos com os melhores preços e qualidade garantida.
             </p>
-            <button disabled className="inline-block bg-gray-300 text-gray-500 font-semibold px-8 py-3 rounded-lg cursor-not-allowed">
-              Ver Produtos 
-            </button>
-          </div>
+            <Link to="/products" className="inline-block bg-white text-primary-600 font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors">
+              Ver Produtos
+            </Link>
+          </div> 
         </div>
       </section>
 
@@ -65,14 +65,14 @@ const Home = () => {
           <h2 className="text-3xl font-bold text-center mb-12">Categorias em Destaque</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {featuredCategories.map((category) => (
-              <div
+              <Link
                 key={category.name}
-                className="card p-8 text-center opacity-60 cursor-not-allowed"
+                to={category.link}
+                className="card p-8 text-center hover:scale-105 transition-transform"
               >
                 <div className="flex justify-center mb-4">{category.icon}</div>
                 <h3 className="text-lg font-semibold">{category.name}</h3>
-                <p className="text-xs text-gray-500 mt-2">Em breve</p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

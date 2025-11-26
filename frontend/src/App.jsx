@@ -15,7 +15,8 @@ import Footer from './components/layout/Footer';
 import Home from './pages/HomePage';
 import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage';
-import Products from './pages/Products';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetail from './pages/ProductDetail';
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/products" element={<Products />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products/:id" element={<ProductDetail />} />
               </Routes>
             </main>
             <Footer />
