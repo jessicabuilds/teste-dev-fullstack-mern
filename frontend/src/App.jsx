@@ -11,6 +11,9 @@ import { CartProvider } from './contexts/CartContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
+// Components
+import ProtectedRoute from './components/ProtectedRoute';
+
 // Pages
 import Home from './pages/HomePage';
 import Login from './pages/LoginPage';
@@ -18,6 +21,7 @@ import Register from './pages/RegisterPage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetail from './pages/ProductDetail';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 
 function App() {
   return (
@@ -34,6 +38,14 @@ function App() {
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/carrinho" element={<CartPage />} />
+                <Route 
+                  path="/checkout" 
+                  element={
+                    <ProtectedRoute>
+                      <CheckoutPage />
+                    </ProtectedRoute>
+                  } 
+                />
               </Routes>
             </main>
             <Footer />
