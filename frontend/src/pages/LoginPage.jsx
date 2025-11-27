@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,10 +27,7 @@ const Login = () => {
     setLoading(false);
 
     if (result.success) {
-      toast.success('Login realizado com sucesso!');
       navigate('/');
-    } else {
-      toast.error(result.error || 'Erro ao fazer login');
     }
   };
 

@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import api from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -45,6 +46,7 @@ export const CartProvider = ({ children }) => {
       if (user) {
         const response = await api.post('/cart/items', { productId, quantity });
         setCart(response.data.data || response.data);
+        toast.success('Produto adicionado ao carrinho!');
         return { success: true };
       } else {
         const localCart = cart || { items: [], total: 0 };
@@ -67,12 +69,15 @@ export const CartProvider = ({ children }) => {
         
         setCart(localCart);
         localStorage.setItem('cart', JSON.stringify(localCart));
+        toast.success('Produto adicionado ao carrinho!');
         return { success: true };
       }
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao adicionar item';
+      toast.error(errorMessage);
       return {
         success: false,
-        error: error.response?.data?.message || 'Erro ao adicionar item',
+        error: errorMessage,
       };
     }
   };
@@ -82,6 +87,7 @@ export const CartProvider = ({ children }) => {
       if (user) {
         const response = await api.put(`/cart/items/${productId}`, { quantity });
         setCart(response.data.data || response.data);
+        toast.success('Quantidade atualizada!');
         return { success: true };
       } else {
         const localCart = { ...cart };
@@ -97,12 +103,15 @@ export const CartProvider = ({ children }) => {
           setCart(localCart);
           localStorage.setItem('cart', JSON.stringify(localCart));
         }
+        toast.success('Quantidade atualizada!');
         return { success: true };
       }
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao atualizar item';
+      toast.error(errorMessage);
       return {
         success: false,
-        error: error.response?.data?.message || 'Erro ao atualizar item',
+        error: errorMessage,
       };
     }
   };
@@ -112,6 +121,7 @@ export const CartProvider = ({ children }) => {
       if (user) {
         const response = await api.delete(`/cart/items/${productId}`);
         setCart(response.data.data || response.data);
+        toast.success('Produto removido do carrinho!');
         return { success: true };
       } else {
         const localCart = { ...cart };
@@ -123,12 +133,15 @@ export const CartProvider = ({ children }) => {
         
         setCart(localCart);
         localStorage.setItem('cart', JSON.stringify(localCart));
+        toast.success('Produto removido do carrinho!');
         return { success: true };
       }
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao remover item';
+      toast.error(errorMessage);
       return {
         success: false,
-        error: error.response?.data?.message || 'Erro ao remover item',
+        error: errorMessage,
       };
     }
   };

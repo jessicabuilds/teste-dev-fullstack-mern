@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import { toast } from 'react-toastify';
 import { useCart } from '../contexts/CartContext';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
@@ -36,14 +35,8 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     setAddingToCart(true);
-    const result = await addItem(product._id, quantity);
+    await addItem(product._id, quantity);
     setAddingToCart(false);
-    
-    if (result.success) {
-      toast.success(`${quantity} ${quantity > 1 ? 'itens adicionados' : 'item adicionado'} ao carrinho!`);
-    } else {
-      toast.error(result.error || 'Erro ao adicionar produto');
-    }
   };
 
   const handleBuyNow = async () => {
@@ -53,8 +46,6 @@ const ProductDetail = () => {
     
     if (result.success) {
       navigate('/carrinho');
-    } else {
-      toast.error(result.error || 'Erro ao adicionar produto');
     }
   };
 

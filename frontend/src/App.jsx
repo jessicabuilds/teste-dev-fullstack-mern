@@ -13,6 +13,7 @@ import Footer from './components/layout/Footer';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Pages
 import Home from './pages/HomePage';
@@ -25,16 +26,18 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import ProfilePage from './pages/ProfilePage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <CartProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">
-              <Routes>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <CartProvider>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">
+                <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
@@ -73,14 +76,16 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </main>
-            <Footer />
-            <ToastContainer position="top-right" autoClose={3000} />
-          </div>
-        </CartProvider>
-      </AuthProvider>
-    </Router>
+              <Footer />
+              <ToastContainer position="top-right" autoClose={3000} />
+            </div>
+          </CartProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

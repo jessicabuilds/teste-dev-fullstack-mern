@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
 
 const CartPage = () => {
@@ -10,20 +9,11 @@ const CartPage = () => {
 
   const handleUpdateQuantity = async (productId, newQuantity) => {
     if (newQuantity < 1) return;
-    
-    const result = await updateItem(productId, newQuantity);
-    if (!result.success) {
-      toast.error(result.error || 'Erro ao atualizar quantidade');
-    }
+    await updateItem(productId, newQuantity);
   };
 
   const handleRemoveItem = async (productId) => {
-    const result = await removeItem(productId);
-    if (result.success) {
-      toast.success('Item removido do carrinho');
-    } else {
-      toast.error(result.error || 'Erro ao remover item');
-    }
+    await removeItem(productId);
   };
 
   const handleCheckout = () => {

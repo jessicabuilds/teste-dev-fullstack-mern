@@ -55,10 +55,7 @@ const Register = () => {
     setLoading(false);
 
     if (result.success) {
-      toast.success('Conta criada com sucesso!');
       navigate('/');
-    } else {
-      toast.error(result.error || 'Erro ao criar conta');
     }
   };
 

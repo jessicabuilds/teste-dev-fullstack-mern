@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -46,11 +47,14 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('refreshToken', refreshToken);
       setUser(userData);
       
+      toast.success('Login realizado com sucesso!');
       return { success: true };
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao fazer login';
+      toast.error(errorMessage);
       return {
         success: false,
-        error: error.response?.data?.message || 'Erro ao fazer login',
+        error: errorMessage,
       };
     }
   };
@@ -58,12 +62,15 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       await api.post('/auth/register', userData);
+      toast.success('Conta criada com sucesso!');
       const loginResult = await login(userData.email, userData.password);
       return loginResult;
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erro ao criar conta';
+      toast.error(errorMessage);
       return {
         success: false,
-        error: error.response?.data?.message || 'Erro ao criar conta',
+        error: errorMessage,
       };
     }
   };
@@ -74,8 +81,10 @@ export const AuthProvider = ({ children }) => {
       if (refreshToken) {
         await api.post('/auth/logout', { refreshToken });
       }
+      toast.success('Logout realizado com sucesso!');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
+      toast.error('Erro ao fazer logout');
     } finally {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
