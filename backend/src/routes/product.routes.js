@@ -92,6 +92,7 @@ router.get('/', ProductController.listProducts);
 router.get('/:id', ProductController.getProduct);
 router.post('/', authenticate, authorize('admin'), productValidation, ProductController.createProduct);
 router.put('/:id', authenticate, authorize('admin'), updateProductValidation, ProductController.updateProduct);
-router.delete('/:id', authenticate, authorize('admin'), ProductController.deleteProduct);
+router.patch('/:id/toggle-active', authenticate, authorize('admin'), ProductController.toggleActive);
+router.delete('/:id', authenticate, authorize('admin'), ProductController.permanentDelete);
 
 module.exports = router;

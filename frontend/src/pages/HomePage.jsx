@@ -72,12 +72,6 @@ const Home = () => {
               >
                 Ver Todos os Produtos
               </Link>
-              <Link 
-                to="/products?category=notebooks" 
-                className="inline-block bg-primary-700 text-white font-semibold px-8 py-4 rounded-lg hover:bg-primary-800 transition-colors text-center border-2 border-white/30"
-              >
-                Ver Notebooks
-              </Link>
             </div>
           </div>
         </div>

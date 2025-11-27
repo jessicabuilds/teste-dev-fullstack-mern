@@ -3,7 +3,11 @@ const { NotFoundError, ValidationError } = require('../utils/errors');
 
 class ProductService {
   async listProducts(filters = {}) {
-    const query = { isActive: true };
+    const query = {};
+
+    if (!filters.includeInactive) {
+      query.isActive = true;
+    }
 
     if (filters.category) {
       query.category = filters.category;
@@ -101,6 +105,29 @@ class ProductService {
 
     product.stock += quantity;
     await product.save();
+
+    return product;
+  }
+
+  async toggleActive(productId) {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      throw new NotFoundError('Product not found');
+    }
+
+    product.isActive = !product.isActive;
+    await product.save();
+
+    return product;
+  }
+
+  async permanentDelete(productId) {
+    const product = await Product.findByIdAndDelete(productId);
+
+    if (!product) {
+      throw new NotFoundError('Product not found');
+    }
 
     return product;
   }

@@ -27,6 +27,7 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import ProfilePage from './pages/ProfilePage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import NotFoundPage from './pages/NotFoundPage';
+import AdminProductsPage from './pages/AdminProductsPage';
 
 function App() {
   return (
@@ -43,7 +44,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/carrinho" element={<CartPage />} />
+                <Route path="/cart" element={<CartPage />} />
                 <Route 
                   path="/checkout" 
                   element={
@@ -61,7 +62,7 @@ function App() {
                   } 
                 />
                 <Route 
-                  path="/perfil" 
+                  path="/profile" 
                   element={
                     <ProtectedRoute>
                       <ProfilePage />
@@ -69,10 +70,18 @@ function App() {
                   } 
                 />
                 <Route 
-                  path="/pedidos" 
+                  path="/orders" 
                   element={
                     <ProtectedRoute>
                       <OrderHistoryPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/products" 
+                  element={
+                    <ProtectedRoute>
+                      <AdminProductsPage />
                     </ProtectedRoute>
                   } 
                 />

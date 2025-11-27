@@ -5,6 +5,7 @@ const users = [
     name: 'Admin User',
     email: 'admin@example.com',
     password: 'Admin123!',
+    role: 'admin',
     phone: '(11) 98765-4321',
     address: {
       street: 'Rua das Flores, 123',
@@ -72,11 +73,9 @@ const seedUsers = async (User) => {
   try {
     console.log('Processando seed de usuários...');
     
-    // Deletar usuários antigos
     await User.deleteMany({});
     console.log('Usuários antigos removidos');
 
-    // Hash das senhas e criar usuários
     const usersWithHashedPasswords = await Promise.all(
       users.map(async (user) => {
         const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -87,7 +86,6 @@ const seedUsers = async (User) => {
       })
     );
 
-    // Inserir usuários no banco
     await User.insertMany(usersWithHashedPasswords);
 
     console.log(`${users.length} usuários inseridos com sucesso!\n`);

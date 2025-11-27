@@ -38,7 +38,7 @@ const Navbar = () => {
             </Link>
             
             {user && (
-              <Link to="/carrinho" className="relative text-gray-700 hover:text-primary-600 transition-colors">
+              <Link to="/cart" className="relative text-gray-700 hover:text-primary-600 transition-colors">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -52,12 +52,17 @@ const Navbar = () => {
             
             {user ? (
               <>
-                <Link to="/pedidos" className="text-gray-700 hover:text-primary-600 transition-colors">
+                <Link to="/orders" className="text-gray-700 hover:text-primary-600 transition-colors">
                   Pedidos
                 </Link>
-                <Link to="/perfil" className="text-gray-700 hover:text-primary-600 transition-colors">
+                <Link to="/profile" className="text-gray-700 hover:text-primary-600 transition-colors">
                   Perfil
                 </Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin/products" className="text-primary-600 hover:text-primary-700 transition-colors font-medium">
+                    Admin
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="text-gray-700 hover:text-primary-600 transition-colors"
@@ -102,18 +107,23 @@ const Navbar = () => {
               Produtos
             </Link>
             {user && (
-              <Link to="/carrinho" className="block py-2 text-gray-700 hover:text-primary-600">
+              <Link to="/cart" className="block py-2 text-gray-700 hover:text-primary-600">
                 Carrinho {cartItemsCount > 0 && `(${cartItemsCount})`}
               </Link>
             )}
             {user ? (
               <>
-                <Link to="/pedidos" className="block py-2 text-gray-700 hover:text-primary-600">
+                <Link to="/orders" className="block py-2 text-gray-700 hover:text-primary-600">
                   Pedidos
                 </Link>
-                <Link to="/perfil" className="block py-2 text-gray-700 hover:text-primary-600">
+                <Link to="/profile" className="block py-2 text-gray-700 hover:text-primary-600">
                   Perfil
                 </Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin/products" className="block py-2 text-primary-600 hover:text-primary-700 font-medium">
+                    Admin
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="block py-2 text-left w-full text-gray-700 hover:text-primary-600"

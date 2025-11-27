@@ -3,11 +3,17 @@ const ProductService = require('../services/ProductService');
 class ProductController {
   async listProducts(req, res, next) {
     try {
-      const { category, search } = req.query;
+      const { category, search, includeInactive } = req.query;
       const filters = {};
 
       if (category) filters.category = category;
       if (search) filters.search = search;
+      
+      // Permitir incluir inativos se o parâmetro for passado
+      // A validação de admin é feita no frontend
+      if (includeInactive === 'true') {
+        filters.includeInactive = true;
+      }
 
       const products = await ProductService.listProducts(filters);
 
@@ -83,6 +89,33 @@ class ProductController {
       res.status(200).json({
         success: true,
         data: product
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async toggleActive(req, res, next) {
+    try {
+      const product = await ProductService.toggleActive(req.params.id);
+
+      res.status(200).json({
+        success: true,
+        message: `Product ${product.isActive ? 'activated' : 'deactivated'} successfully`,
+        data: product
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async permanentDelete(req, res, next) {
+    try {
+      await ProductService.permanentDelete(req.params.id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Product permanently deleted'
       });
     } catch (error) {
       next(error);
