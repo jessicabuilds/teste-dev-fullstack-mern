@@ -2,7 +2,6 @@ const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const ProductService = require('./ProductService');
 const PaymentGatewayService = require('./PaymentGatewayService');
-const CartService = require('./CartService');
 const { NotFoundError, ValidationError, ConflictError } = require('../utils/errors');
 
 class OrderService {
@@ -43,10 +42,6 @@ class OrderService {
 
     await order.save();
 
-    for (const item of cart.items) {
-      await ProductService.reserveStock(item.product._id, item.quantity);
-    }
-
     const transaction = await PaymentGatewayService.createTransaction({
       orderId: order._id,
       amount: order.total,
@@ -54,7 +49,9 @@ class OrderService {
       cardData
     });
 
-    await CartService.clearCart(userId);
+    cart.items = [];
+    cart.total = 0;
+    await cart.save();
 
     return order;
   }

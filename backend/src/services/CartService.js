@@ -27,11 +27,6 @@ class CartService {
       throw new ValidationError('Product is not available');
     }
 
-    const hasStock = await ProductService.checkStock(productId, quantity);
-    if (!hasStock) {
-      throw new ConflictError('Insufficient stock for this product');
-    }
-
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
@@ -43,16 +38,27 @@ class CartService {
     );
 
     if (existingItemIndex > -1) {
-      const newQuantity = cart.items[existingItemIndex].quantity + quantity;
+      // Item já existe no carrinho - adicionar mais quantidade
+      const oldQuantity = cart.items[existingItemIndex].quantity;
+      const newQuantity = oldQuantity + quantity;
 
       const hasStockForNew = await ProductService.checkStock(productId, newQuantity);
       if (!hasStockForNew) {
         throw new ConflictError('Insufficient stock for this quantity');
       }
 
+      await ProductService.reserveStock(productId, quantity);
+
       cart.items[existingItemIndex].quantity = newQuantity;
       cart.items[existingItemIndex].price = product.price;
     } else {
+      const hasStock = await ProductService.checkStock(productId, quantity);
+      if (!hasStock) {
+        throw new ConflictError('Insufficient stock for this product');
+      }
+
+      await ProductService.reserveStock(productId, quantity);
+
       cart.items.push({
         product: productId,
         quantity,
@@ -85,9 +91,17 @@ class CartService {
       throw new NotFoundError('Item not found in cart');
     }
 
-    const hasStock = await ProductService.checkStock(productId, quantity);
-    if (!hasStock) {
-      throw new ConflictError('Insufficient stock for this quantity');
+    const oldQuantity = cart.items[itemIndex].quantity;
+    const quantityDiff = quantity - oldQuantity;
+
+    if (quantityDiff > 0) {
+      const hasStock = await ProductService.checkStock(productId, quantityDiff);
+      if (!hasStock) {
+        throw new ConflictError('Insufficient stock for this quantity');
+      }
+      await ProductService.reserveStock(productId, quantityDiff);
+    } else if (quantityDiff < 0) {
+      await ProductService.releaseStock(productId, Math.abs(quantityDiff));
     }
 
     const product = await ProductService.getProduct(productId);
@@ -115,6 +129,9 @@ class CartService {
       throw new NotFoundError('Item not found in cart');
     }
 
+    const quantity = cart.items[itemIndex].quantity;
+    await ProductService.releaseStock(productId, quantity);
+
     cart.items.splice(itemIndex, 1);
 
     await cart.save();
@@ -128,6 +145,10 @@ class CartService {
 
     if (!cart) {
       throw new NotFoundError('Cart not found');
+    }
+
+    for (const item of cart.items) {
+      await ProductService.releaseStock(item.product.toString(), item.quantity);
     }
 
     cart.items = [];
