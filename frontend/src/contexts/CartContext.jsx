@@ -32,7 +32,7 @@ export const CartProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await api.get('/cart');
-      setCart(response.data);
+      setCart(response.data.data || response.data);
     } catch (error) {
       console.error('Erro ao carregar carrinho:', error);
     } finally {
@@ -44,7 +44,7 @@ export const CartProvider = ({ children }) => {
     try {
       if (user) {
         const response = await api.post('/cart/items', { productId, quantity });
-        setCart(response.data);
+        setCart(response.data.data || response.data);
         return { success: true };
       } else {
         const localCart = cart || { items: [], total: 0 };
@@ -55,10 +55,11 @@ export const CartProvider = ({ children }) => {
         } else {
           const productResponse = await api.get(`/products/${productId}`);
           localCart.items.push({
-            product: productResponse.data,
+            product: productResponse.data.data || productResponse.data,
             quantity,
           });
         }
+        
         localCart.total = localCart.items.reduce(
           (sum, item) => sum + item.product.price * item.quantity,
           0
@@ -80,7 +81,7 @@ export const CartProvider = ({ children }) => {
     try {
       if (user) {
         const response = await api.put(`/cart/items/${productId}`, { quantity });
-        setCart(response.data);
+        setCart(response.data.data || response.data);
         return { success: true };
       } else {
         const localCart = { ...cart };
@@ -110,7 +111,7 @@ export const CartProvider = ({ children }) => {
     try {
       if (user) {
         const response = await api.delete(`/cart/items/${productId}`);
-        setCart(response.data);
+        setCart(response.data.data || response.data);
         return { success: true };
       } else {
         const localCart = { ...cart };

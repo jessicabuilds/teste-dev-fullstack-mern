@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';  
 import { useCart } from '../contexts/CartContext';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
@@ -23,7 +23,6 @@ const ProductsPage = () => {
   ];
 
   useEffect(() => {
-    // Atualizar categoria quando a URL mudar
     const categoryFromUrl = searchParams.get('category');
     if (categoryFromUrl && categoryFromUrl !== selectedCategory) {
       setSelectedCategory(categoryFromUrl);

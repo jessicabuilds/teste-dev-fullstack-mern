@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   const loadUser = async () => {
     try {
       const response = await api.get('/users/profile');
-      setUser(response.data);
+      setUser(response.data.data || response.data);
     } catch (error) {
       console.error('Erro ao carregar usuário:', error);
       localStorage.removeItem('accessToken');
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { accessToken, refreshToken, user: userData } = response.data;
+      const { accessToken, refreshToken, user: userData } = response.data.data;
       
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
@@ -57,14 +57,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await api.post('/auth/register', userData);
-      const { accessToken, refreshToken, user: newUser } = response.data;
-      
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      setUser(newUser);
-      
-      return { success: true };
+      await api.post('/auth/register', userData);
+      const loginResult = await login(userData.email, userData.password);
+      return loginResult;
     } catch (error) {
       return {
         success: false,
