@@ -22,6 +22,9 @@ import ProductsPage from './pages/ProductsPage';
 import ProductDetail from './pages/ProductDetail';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import ProfilePage from './pages/ProfilePage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
 
 function App() {
   return (
@@ -43,6 +46,30 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <CheckoutPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/order-confirmation/:orderId" 
+                  element={
+                    <ProtectedRoute>
+                      <OrderConfirmationPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/perfil" 
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/pedidos" 
+                  element={
+                    <ProtectedRoute>
+                      <OrderHistoryPage />
                     </ProtectedRoute>
                   } 
                 />
