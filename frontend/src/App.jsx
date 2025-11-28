@@ -28,6 +28,7 @@ import ProfilePage from './pages/ProfilePage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AdminProductsPage from './pages/AdminProductsPage';
+import AdminOrdersPage from './pages/AdminOrdersPage';
 
 function App() {
   return (
@@ -82,6 +83,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <AdminProductsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/orders" 
+                  element={
+                    <ProtectedRoute>
+                      <AdminOrdersPage />
                     </ProtectedRoute>
                   } 
                 />

@@ -22,6 +22,7 @@ const orderIdValidation = [
 ];
 
 router.post('/checkout', authenticate, checkoutValidation, OrderController.checkout);
+router.get('/admin/all', authenticate, OrderController.getAllOrders);
 router.get('/', authenticate, OrderController.getUserOrders);
 router.get('/:id', authenticate, orderIdValidation, OrderController.getOrder);
 router.post('/:id/cancel', authenticate, orderIdValidation, OrderController.cancelOrder);

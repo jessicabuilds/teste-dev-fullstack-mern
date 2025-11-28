@@ -57,7 +57,9 @@ class OrderService {
   }
 
   async getOrder(orderId) {
-    const order = await Order.findById(orderId).populate('items.product');
+    const order = await Order.findById(orderId)
+      .populate('userId', 'name email')
+      .populate('items.product');
 
     if (!order) {
       throw new NotFoundError('Order not found');
@@ -69,6 +71,15 @@ class OrderService {
   async getUserOrders(userId) {
     const orders = await Order.find({ userId })
       .sort({ createdAt: -1 })
+      .populate('items.product');
+
+    return orders;
+  }
+
+  async getAllOrders() {
+    const orders = await Order.find()
+      .sort({ createdAt: -1 })
+      .populate('userId', 'name email')
       .populate('items.product');
 
     return orders;

@@ -8,9 +8,7 @@ class ProductController {
 
       if (category) filters.category = category;
       if (search) filters.search = search;
-      
-      // Permitir incluir inativos se o parâmetro for passado
-      // A validação de admin é feita no frontend
+
       if (includeInactive === 'true') {
         filters.includeInactive = true;
       }

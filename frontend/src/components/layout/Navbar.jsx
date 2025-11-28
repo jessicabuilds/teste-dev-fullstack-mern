@@ -1,13 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useCart } from '../../contexts/CartContext'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false)
   const { user, logout } = useAuth()
   const { getItemCount } = useCart()
   const navigate = useNavigate()
+  const dropdownRef = useRef(null)
   
   const cartItemsCount = getItemCount()
   
@@ -15,6 +17,17 @@ const Navbar = () => {
     await logout()
     navigate('/')
   }
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsAdminDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -53,15 +66,41 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link to="/orders" className="text-gray-700 hover:text-primary-600 transition-colors">
-                  Pedidos
+                  Meus Pedidos
                 </Link>
                 <Link to="/profile" className="text-gray-700 hover:text-primary-600 transition-colors">
                   Perfil
                 </Link>
                 {user.role === 'admin' && (
-                  <Link to="/admin/products" className="text-primary-600 hover:text-primary-700 transition-colors font-medium">
-                    Admin
-                  </Link>
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
+                      className="text-primary-600 hover:text-primary-700 transition-colors font-medium flex items-center"
+                    >
+                      Admin
+                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {isAdminDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
+                        <Link
+                          to="/admin/products"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                          onClick={() => setIsAdminDropdownOpen(false)}
+                        >
+                          Gerenciar Produtos
+                        </Link>
+                        <Link
+                          to="/admin/orders"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                          onClick={() => setIsAdminDropdownOpen(false)}
+                        >
+                          Gerenciar Pedidos
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 )}
                 <button
                   onClick={handleLogout}
@@ -114,7 +153,7 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link to="/orders" className="block py-2 text-gray-700 hover:text-primary-600">
-                  Pedidos
+                  Meus Pedidos
                 </Link>
                 <Link to="/profile" className="block py-2 text-gray-700 hover:text-primary-600">
                   Perfil

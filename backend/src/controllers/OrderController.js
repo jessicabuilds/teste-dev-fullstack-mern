@@ -24,7 +24,7 @@ class OrderController {
     try {
       const order = await OrderService.getOrder(req.params.id);
 
-      if (order.userId.toString() !== req.user.id) {
+      if (req.user.role !== 'admin' && order.userId.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
           error: 'Access denied'
@@ -34,6 +34,20 @@ class OrderController {
       res.status(200).json({
         success: true,
         data: order
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAllOrders(req, res, next) {
+    try {
+      const orders = await OrderService.getAllOrders();
+
+      res.status(200).json({
+        success: true,
+        count: orders.length,
+        data: orders
       });
     } catch (error) {
       next(error);
@@ -58,7 +72,7 @@ class OrderController {
     try {
       const order = await OrderService.getOrder(req.params.id);
 
-      if (order.userId.toString() !== req.user.id) {
+      if (req.user.role !== 'admin' && order.userId.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
           error: 'Access denied'

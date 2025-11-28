@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -137,6 +137,22 @@ const AdminProductsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Admin Navigation */}
+      <div className="mb-6 flex gap-2">
+        <Link
+          to="/admin/products"
+          className="px-4 py-2 bg-primary-600 text-white rounded-lg font-medium"
+        >
+          Produtos
+        </Link>
+        <Link
+          to="/admin/orders"
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300"
+        >
+          Pedidos
+        </Link>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Gerenciar Produtos</h1>
@@ -153,8 +169,8 @@ const AdminProductsPage = () => {
         </button>
       </div>
 
-      {/* Lista de Produtos */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      {/* Lista de Produtos - Desktop */}
+      <div className="hidden lg:block bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -251,6 +267,79 @@ const AdminProductsPage = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Lista de Produtos - Mobile */}
+      <div className="lg:hidden space-y-4">
+        {products.map((product) => (
+          <div key={product._id} className="bg-white rounded-lg shadow p-4">
+            <div className="flex gap-4 mb-3">
+              <img
+                src={getProductImage(product)}
+                alt={product.name}
+                className="h-20 w-20 rounded object-cover flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-medium text-gray-900 truncate">
+                  {product.name}
+                </h3>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-800">
+                    {product.category}
+                  </span>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                    product.isActive 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {product.isActive ? 'Ativo' : 'Inativo'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between mb-3 text-sm">
+              <div>
+                <div className="text-xs text-gray-500">Preço</div>
+                <div className="font-medium text-gray-900">R$ {product.price.toFixed(2)}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Estoque</div>
+                <div className="font-medium text-gray-900">{product.stock}</div>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleEdit(product)}
+                className="flex-1 px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleToggleActive(product)}
+                className={`flex-1 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${
+                  product.isActive 
+                    ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' 
+                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                }`}
+              >
+                {product.isActive ? 'Desativar' : 'Ativar'}
+              </button>
+              {!product.isActive && (
+                <button
+                  onClick={() => handlePermanentDelete(product._id)}
+                  className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                  title="Excluir permanentemente"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Modal */}
