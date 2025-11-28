@@ -9,12 +9,13 @@ class PaymentSyncJob {
     try {
       logger.info('Iniciando sincronização de pagamentos...');
 
+      // Buscar transações que precisam ser sincronizadas
       const transactions = await Transaction.find({
-        status: { $in: ['pending', 'processing'] }
+        status: { $in: ['pending', 'processing', 'approved', 'rejected'] }
       }).populate('orderId');
 
       if (transactions.length === 0) {
-        logger.info('Nenhuma transação pendente encontrada');
+        logger.info('Nenhuma transação para sincronizar');
         return;
       }
 
@@ -41,36 +42,31 @@ class PaymentSyncJob {
 
   async syncTransaction(transaction) {
     try {
-      const gatewayStatus = await PaymentGatewayService.getTransactionStatus(
-        transaction.gatewayTransactionId
-      );
-
-      if (gatewayStatus.status === transaction.status) {
-        return;
-      }
-
-      logger.info(`Atualizando transação ${transaction._id}: ${transaction.status} -> ${gatewayStatus.status}`);
-
-      transaction.status = gatewayStatus.status;
-      transaction.gatewayResponse = gatewayStatus;
-      await transaction.save();
-
       const order = await Order.findById(transaction.orderId);
       if (!order) {
         logger.error(`Pedido ${transaction.orderId} não encontrado`);
         return;
       }
 
-      if (gatewayStatus.status === 'paid') {
+      // Se o pedido já foi sincronizado, pular
+      if (order.paymentStatus === 'paid' || order.paymentStatus === 'failed') {
+        return;
+      }
+
+      // Verificar status da transação
+      if (transaction.status === 'approved') {
+        logger.info(`Sincronizando pedido ${order._id}: transação aprovada`);
         order.paymentStatus = 'paid';
-        order.status = 'processing';
+        order.status = 'confirmed';
         await order.save();
         logger.info(`Pedido ${order._id} marcado como pago`);
-      } else if (gatewayStatus.status === 'failed') {
+      } else if (transaction.status === 'rejected') {
+        logger.info(`Sincronizando pedido ${order._id}: transação rejeitada`);
         order.paymentStatus = 'failed';
-        order.status = 'cancelled';
+        order.status = 'failed';
         await order.save();
 
+        // Liberar estoque
         for (const item of order.items) {
           await Product.findByIdAndUpdate(item.product, {
             $inc: { stock: item.quantity }

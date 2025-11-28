@@ -158,7 +158,7 @@ const OrderConfirmationPage = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link to="/pedidos" className="btn-primary flex-1 text-center">
+          <Link to="/orders" className="btn-primary flex-1 text-center">
             Ver Meus Pedidos
           </Link>
           <Link to="/products" className="btn-secondary flex-1 text-center">

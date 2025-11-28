@@ -65,16 +65,21 @@ class PaymentGatewayService {
   scheduleWebhook(transactionId, gatewayTransactionId) {
     const delay = Math.floor(Math.random() * 3000) + 2000;
 
+    console.log(`[PaymentGateway] Agendando webhook para transação ${gatewayTransactionId} em ${delay}ms`);
+
     setTimeout(async () => {
       try {
         const transaction = await Transaction.findById(transactionId);
 
         if (!transaction) {
+          console.error(`[PaymentGateway] Transação ${transactionId} não encontrada`);
           return;
         }
 
         const isApproved = Math.random() > 0.3;
         const newStatus = isApproved ? 'approved' : 'rejected';
+
+        console.log(`[PaymentGateway] Atualizando transação ${gatewayTransactionId}: ${transaction.status} -> ${newStatus}`);
 
         transaction.status = newStatus;
         transaction.gatewayResponse = {
@@ -85,10 +90,11 @@ class PaymentGatewayService {
         };
 
         await transaction.save();
+        console.log(`[PaymentGateway] Transação ${gatewayTransactionId} salva com status ${newStatus}`);
 
         await this.simulateWebhookCall(gatewayTransactionId, newStatus);
       } catch (error) {
-        console.error('Error in scheduled webhook:', error);
+        console.error('[PaymentGateway] Error in scheduled webhook:', error);
       }
     }, delay);
   }
