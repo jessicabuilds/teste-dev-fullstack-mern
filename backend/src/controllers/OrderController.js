@@ -24,7 +24,8 @@ class OrderController {
     try {
       const order = await OrderService.getOrder(req.params.id);
 
-      if (req.user.role !== 'admin' && order.userId.toString() !== req.user.id) {
+      // Admins podem ver qualquer pedido, usuários só podem ver seus próprios
+      if (req.user.role !== 'admin' && order.userId.toString() !== req.user.id.toString()) {
         return res.status(403).json({
           success: false,
           error: 'Access denied'

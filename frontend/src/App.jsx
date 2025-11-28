@@ -29,6 +29,7 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
+import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 
 function App() {
   return (
@@ -91,6 +92,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <AdminOrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/orders/:orderId" 
+                  element={
+                    <ProtectedRoute>
+                      <AdminOrderDetailPage />
                     </ProtectedRoute>
                   } 
                 />

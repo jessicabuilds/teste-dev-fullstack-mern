@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 const OrderController = require('../controllers/OrderController');
-const { authenticate } = require('../middlewares/auth.middleware');
+const { authenticate, authorize } = require('../middlewares/auth.middleware');
 const { validate } = require('../middlewares/validation.middleware');
 
 const router = express.Router();
@@ -22,7 +22,7 @@ const orderIdValidation = [
 ];
 
 router.post('/checkout', authenticate, checkoutValidation, OrderController.checkout);
-router.get('/admin/all', authenticate, OrderController.getAllOrders);
+router.get('/admin/all', authenticate, authorize('admin'), OrderController.getAllOrders);
 router.get('/', authenticate, OrderController.getUserOrders);
 router.get('/:id', authenticate, orderIdValidation, OrderController.getOrder);
 router.post('/:id/cancel', authenticate, orderIdValidation, OrderController.cancelOrder);

@@ -250,7 +250,7 @@ const AdminOrdersPage = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link
-                    to={`/order-confirmation/${order._id}`}
+                    to={`/admin/orders/${order._id}`}
                     className="text-primary-600 hover:text-primary-900"
                   >
                     Ver Detalhes
@@ -323,7 +323,7 @@ const AdminOrdersPage = () => {
             </div>
 
             <Link
-              to={`/order-confirmation/${order._id}`}
+              to={`/admin/orders/${order._id}`}
               className="block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
             >
               Ver Detalhes
