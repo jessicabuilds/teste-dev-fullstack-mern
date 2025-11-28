@@ -45,14 +45,55 @@ const CheckoutPage = () => {
   }
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === 'cardNumber') {
+      const numbers = value.replace(/\D/g, '').slice(0, 16);
+      formattedValue = numbers.replace(/(\d{4})(?=\d)/g, '$1 ');
+    } else if (name === 'cardExpiry') {
+      const numbers = value.replace(/\D/g, '').slice(0, 4);
+      if (numbers.length >= 2) {
+        formattedValue = numbers.slice(0, 2) + '/' + numbers.slice(2);
+      } else {
+        formattedValue = numbers;
+      }
+    } else if (name === 'cardCvv') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 4);
+    } else if (name === 'cardName') {
+      formattedValue = value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '').toUpperCase();
+    }
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: formattedValue,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const cardNumberClean = formData.cardNumber.replace(/\s/g, '');
+    if (cardNumberClean.length < 13 || cardNumberClean.length > 16) {
+      toast.error('Número do cartão deve ter entre 13 e 16 dígitos');
+      return;
+    }
+
+    if (formData.cardName.length < 3) {
+      toast.error('Nome no cartão deve ter pelo menos 3 caracteres');
+      return;
+    }
+
+    if (formData.cardExpiry.length !== 5) {
+      toast.error('Data de validade inválida (formato: MM/AA)');
+      return;
+    }
+
+    if (formData.cardCvv.length < 3 || formData.cardCvv.length > 4) {
+      toast.error('CVV deve ter 3 ou 4 dígitos');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -66,7 +107,7 @@ const CheckoutPage = () => {
         },
         paymentMethod: {
           type: 'credit_card',
-          cardNumber: formData.cardNumber.replace(/\s/g, ''),
+          cardNumber: cardNumberClean,
           cardName: formData.cardName,
           cardExpiry: formData.cardExpiry,
           cardCvv: formData.cardCvv,
@@ -201,6 +242,7 @@ const CheckoutPage = () => {
                     placeholder="0000 0000 0000 0000"
                     maxLength="19"
                   />
+                  <p className="text-xs text-gray-500 mt-1">13 a 16 dígitos</p>
                 </div>
 
                 <div>
@@ -216,6 +258,7 @@ const CheckoutPage = () => {
                     className="input-field"
                     placeholder="Nome como está no cartão"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Apenas letras</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -233,6 +276,7 @@ const CheckoutPage = () => {
                       placeholder="MM/AA"
                       maxLength="5"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Formato: MM/AA</p>
                   </div>
 
                   <div>
@@ -249,6 +293,7 @@ const CheckoutPage = () => {
                       placeholder="000"
                       maxLength="4"
                     />
+                    <p className="text-xs text-gray-500 mt-1">3 ou 4 dígitos</p>
                   </div>
                 </div>
               </div>
