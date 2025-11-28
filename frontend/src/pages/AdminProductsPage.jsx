@@ -66,7 +66,9 @@ const AdminProductsPage = () => {
       resetForm();
       loadProducts();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Erro ao salvar produto');
+      console.error('Erro ao salvar produto:', error.response);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Erro ao salvar produto';
+      toast.error(errorMessage);
     }
   };
 
